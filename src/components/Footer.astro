@@ -1,0 +1,18 @@
+<footer class="row">
+  <p class="year caps">&copy; {new Date().getFullYear()}</p>
+</footer>
+
+<style>
+  footer {
+    align-items: baseline;
+    padding: 18px 0 28px;
+    border-top: 1px solid var(--line);
+  }
+  /* In the margin column, under the rule. */
+  .year {
+    grid-column: -2;
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+</style>

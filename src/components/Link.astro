@@ -1,0 +1,22 @@
+---
+import { withBase } from "@lib/utils";
+
+type Props = {
+  href: string;
+  external?: boolean;
+  class?: string;
+};
+
+const { href, external, class: className, ...rest } = Astro.props;
+
+// Internal, site-absolute links get the base path; external links and
+// mailto:/anchors pass through unchanged and open in a new tab.
+const resolvedHref = external ? href : withBase(href);
+---
+
+<a
+  href={resolvedHref}
+  class={className}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noopener" : undefined}
+  {...rest}><slot /></a>

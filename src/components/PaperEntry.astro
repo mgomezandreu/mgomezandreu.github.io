@@ -1,0 +1,113 @@
+---
+import Sketch from "@components/Sketch.astro";
+import SiteswapControls from "@components/SiteswapControls.astro";
+import { DRAGGABLE } from "@lib/sketch/core";
+import { splitMarks } from "@lib/utils";
+import type { Publication } from "@data/publications";
+
+type Props = {
+  pub: Publication;
+  // Entry number in the notebook, counting up from the oldest paper.
+  number: number;
+};
+
+const { pub, number } = Astro.props;
+const sketchId = `sketch-${pub.id}`;
+const draggable = DRAGGABLE.includes(pub.sketch);
+---
+
+<article class="entry" id={pub.id}>
+  <div class="sketch">
+    <Sketch id={sketchId} scene={pub.sketch} height={pub.sketch === "juggle" ? 170 : 132} label={`Living sketch: ${pub.headline}`} />
+    {pub.sketch === "juggle" && <SiteswapControls target={sketchId} custom />}
+    {draggable && <button type="button" class="reset" data-reset data-for={sketchId}>start over</button>}
+  </div>
+  <div class="body">
+    <p class="meta caps">
+      no. {String(number).padStart(2, "0")} · {pub.year} · {pub.venue}{pub.award && <> · <span class="award">{pub.award}</span></>}
+    </p>
+    <p class="headline hand">{pub.headline}</p>
+    <h3>{pub.title}</h3>
+    <p class="authors">
+      {pub.authors.map((a, i) => (
+        <>{i > 0 && ", "}{i === pub.me ? <u>{a}</u> : a}</>
+      ))}
+    </p>
+    <p class="deck">{splitMarks(pub.deck).map(p => (p.marked ? <mark>{p.text}</mark> : p.text))}</p>
+    <p class="links">
+      {pub.links.map((l, i) => (
+        <>{i > 0 && <span aria-hidden="true"> · </span>}<a href={l.href}>{l.label}</a></>
+      ))}
+    </p>
+  </div>
+</article>
+
+<style>
+  .entry {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr) var(--margin);
+    column-gap: var(--gap);
+    align-items: start;
+    padding: 18px 0;
+    border-bottom: 1px dotted var(--dots);
+  }
+  p {
+    margin: 0;
+  }
+  .meta {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .award {
+    color: var(--red);
+  }
+  .headline {
+    margin: 2px 0 4px;
+    font-size: 26px;
+    line-height: 1.05;
+  }
+  h3 {
+    margin: 0 0 4px;
+    font-size: 16.5px;
+    line-height: 1.3;
+  }
+  .authors {
+    font-size: 14.5px;
+    color: var(--quiet);
+  }
+  .authors u {
+    text-decoration-color: var(--red);
+    text-underline-offset: 2px;
+  }
+  .deck {
+    margin: 6px 0 4px;
+    font-size: 15.5px;
+    font-style: italic;
+    color: var(--body);
+  }
+  .links {
+    font-size: 15px;
+  }
+  /* Same look as the siteswap buttons under the juggler. */
+  .reset {
+    padding: 0 5px;
+    border: 0;
+    background: none;
+    font: 500 20px/1.2 var(--hand);
+    color: var(--pen);
+    cursor: pointer;
+  }
+  .reset:focus-visible {
+    outline: 1.5px dashed var(--pen);
+    outline-offset: 2px;
+  }
+  @media (max-width: 760px) {
+    .entry {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 10px;
+    }
+    .sketch {
+      max-width: 360px;
+    }
+  }
+</style>

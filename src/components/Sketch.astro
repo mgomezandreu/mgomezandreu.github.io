@@ -1,0 +1,49 @@
+---
+import { DRAGGABLE, type SceneName } from "@lib/sketch/core";
+
+type Props = {
+  scene: SceneName;
+  label: string;
+  height: number;
+  // Needed when controls (siteswap buttons, reset) point at this sketch.
+  id?: string;
+};
+
+const { scene, label, height, id } = Astro.props;
+---
+
+<canvas
+  id={id}
+  class="sketch"
+  data-scene={scene}
+  data-draggable={DRAGGABLE.includes(scene) ? "" : undefined}
+  role="img"
+  aria-label={label}
+  style={`--h: ${height}px`}
+></canvas>
+
+<script>
+  import { mountSketches } from "@lib/sketch/mount";
+  mountSketches();
+</script>
+
+<style>
+  .sketch {
+    display: block;
+    width: 100%;
+    height: var(--h);
+  }
+  .sketch[data-draggable] {
+    cursor: grab;
+    touch-action: none;
+  }
+  .sketch[data-dragging] {
+    cursor: grabbing;
+  }
+  /* On touch screens keep vertical page scrolling; drags still work sideways. */
+  @media (pointer: coarse) {
+    .sketch[data-draggable] {
+      touch-action: pan-y;
+    }
+  }
+</style>

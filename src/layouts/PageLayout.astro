@@ -1,0 +1,47 @@
+---
+import Head from "@components/Head.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import { SITE } from "@consts";
+
+type Props = {
+  // Omitted on the home page, where the site name is the whole title.
+  title?: string;
+  description: string;
+};
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head title={title ? `${title} · ${SITE.NAME}` : SITE.NAME} description={description} />
+    <!-- Highlights start undrawn only when they can be drawn on; set before first paint. -->
+    <script is:inline>
+      if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.classList.add("js-marks");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="sheet">
+      <Header />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <script is:inline>
+      // Draw each highlight once it is well inside the viewport.
+      if (document.documentElement.classList.contains("js-marks")) {
+        const io = new IntersectionObserver(entries => entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add("on");
+          io.unobserve(e.target);
+        }), { rootMargin: "0px 0px -15% 0px" });
+        document.querySelectorAll("mark").forEach(m => io.observe(m));
+      }
+    </script>
+  </body>
+</html>

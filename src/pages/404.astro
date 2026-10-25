@@ -1,0 +1,22 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+import Link from "@components/Link.astro";
+---
+
+<PageLayout title="Not found" description="This page does not exist.">
+  <!-- The site used to live under /personal/: send old links (pages, PDFs) to
+       the same path at the root. GitHub Pages serves this page for any
+       missing path, so this catches whatever the redirects in astro.config.mjs
+       do not. -->
+  <script is:inline>
+    if (/^\/personal(\/|$)/.test(location.pathname)) {
+      location.replace((location.pathname.slice(9) || "/") + location.search + location.hash);
+    }
+  </script>
+  <div class="row">
+    <div>
+      <h1 class="page-title">Page not found.</h1>
+      <p>This page doesn't exist. Try the <Link href="/">home page</Link>.</p>
+    </div>
+  </div>
+</PageLayout>

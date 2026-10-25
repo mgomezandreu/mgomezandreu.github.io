@@ -1,0 +1,78 @@
+---
+type Props = {
+  // id of the juggling <Sketch> these controls drive
+  target: string;
+  patterns?: string[];
+  // Show the "your own pattern" field.
+  custom?: boolean;
+};
+
+const { target, patterns = ["744", "3", "423"], custom = false } = Astro.props;
+---
+
+<div class="controls">
+  <div class="patterns">
+    {patterns.map((p, i) => (
+      <button type="button" data-siteswap={p} data-for={target} aria-pressed={i === 0 ? "true" : "false"}>{p}</button>
+    ))}
+  </div>
+  {custom && (
+    <form data-siteswap-form data-for={target}>
+      <input name="siteswap" maxlength="8" inputmode="numeric" placeholder="your own" aria-label="Your own siteswap pattern" />
+      <button type="submit">throw</button>
+      <span class="msg" data-siteswap-msg data-for={target} aria-live="polite"></span>
+    </form>
+  )}
+</div>
+
+<style>
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .patterns {
+    display: flex;
+    gap: 2px;
+  }
+  button {
+    font: 500 20px/1.2 var(--hand);
+    color: var(--pen);
+    background: none;
+    border: 0;
+    border-bottom: 1.5px solid transparent;
+    padding: 0 5px;
+    cursor: pointer;
+  }
+  button[aria-pressed="true"] {
+    color: var(--red);
+    border-bottom-color: var(--red);
+  }
+  button:focus-visible,
+  input:focus-visible {
+    outline: 1.5px dashed var(--pen);
+    outline-offset: 2px;
+  }
+  form {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  input {
+    width: 7.5ch;
+    font: 500 19px var(--hand);
+    color: var(--pen);
+    background: none;
+    border: 0;
+    border-bottom: 1px dotted var(--dots);
+    padding: 0 2px;
+  }
+  input::placeholder {
+    color: var(--muted);
+  }
+  .msg {
+    font: italic 14px var(--serif);
+    color: var(--red);
+  }
+</style>

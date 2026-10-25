@@ -1,0 +1,326 @@
+/* Field Notes: one notebook page per screen. Print serif for facts, the pen
+   (black ink, handwriting face) for notes, red for margin annotations, a
+   yellow highlighter for the one thing worth remembering. */
+
+:root {
+  --paper: #f6f1e7;
+  --paper-hi: #fbf8f1;
+  --print: #14171d;
+  --body: #262a33;
+  --quiet: #3f4450;
+  --muted: #5c574d;
+  --pen: #141210;
+  --red: #a33a22;
+  --rule: rgba(163, 58, 34, 0.55);
+  --line: #c4b79f;
+  --dots: #b3a68c;
+  --marker: rgba(255, 210, 0, 0.42);
+  --marker-ends: rgba(255, 196, 0, 0.62);
+  --serif: "Newsreader", Georgia, serif;
+  --hand: "Caveat", cursive;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Layout: writing column, then the ruled margin on the right. */
+  --margin: 170px;
+  --gap: 28px;
+  --pad: 28px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  scroll-padding-top: 16px;
+}
+
+body {
+  margin: 0;
+  color: var(--print);
+  font: 17px/1.55 var(--serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--dots);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.2s, color 0.2s;
+}
+
+a:hover {
+  text-decoration-color: var(--red);
+}
+
+:focus-visible {
+  outline: 1.5px dashed var(--pen);
+  outline-offset: 2px;
+}
+
+/* Highlighter: an uneven swipe sitting low behind the text, with more ink
+   where the marker lands and lifts. It is drawn on as it scrolls into view
+   (PageLayout adds .js-marks and .on); without JS it simply shows. */
+mark {
+  margin: 0 -0.2em;
+  padding: 0.05em 0.2em;
+  border-radius: 0.35em 0.15em 0.4em 0.2em;
+  color: inherit;
+  background-color: transparent;
+  background-image: linear-gradient(100deg, var(--marker-ends) 0%, var(--marker) 5%, var(--marker) 95%, var(--marker-ends) 100%);
+  background-repeat: no-repeat;
+  background-position: 0 70%;
+  background-size: 100% 78%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.js-marks mark {
+  background-size: 0% 78%;
+  transition: background-size 0.7s cubic-bezier(0.3, 0.6, 0.4, 1);
+}
+
+.js-marks mark.on {
+  background-size: 100% 78%;
+}
+
+::selection {
+  background: rgba(163, 58, 34, 0.16);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+/* The sheet: the page itself, with the margin rule drawn down its full height. */
+.sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 1040px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
+
+.sheet::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(var(--pad) + var(--margin) + var(--gap) / 2);
+  width: 1px;
+  background: var(--rule);
+  pointer-events: none;
+}
+
+main {
+  flex: 1;
+  padding-bottom: 48px;
+}
+
+/* Writing on the left of the rule, margin notes on the right. */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--margin);
+  column-gap: var(--gap);
+}
+
+.hand {
+  font-family: var(--hand);
+  font-weight: 500;
+  color: var(--pen);
+}
+
+.caps {
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+}
+
+.section-title {
+  margin: 44px 0 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* Lists of short items (projects, notes): dotted line between entries. */
+.item {
+  padding: 14px 0;
+  border-bottom: 1px dotted var(--dots);
+}
+
+.item-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--print);
+}
+
+.item-desc {
+  margin: 2px 0 0;
+  font-size: 15.5px;
+  color: var(--body);
+}
+
+.page-title {
+  margin: 34px 0 6px;
+  font-size: 36px;
+  letter-spacing: -0.01em;
+}
+
+/* Markdown in notes and project write-ups. */
+.prose {
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--body);
+}
+
+.prose h2 {
+  margin: 1.6em 0 0.4em;
+  font-size: 25px;
+  color: var(--print);
+}
+
+.prose h3 {
+  margin: 1.4em 0 0.3em;
+  font-size: 20px;
+  color: var(--print);
+}
+
+.prose p {
+  margin: 0 0 1em;
+}
+
+.prose a {
+  color: var(--pen);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--print);
+}
+
+.prose img,
+.prose video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.4em 0;
+  border: 1px solid var(--line);
+  background: var(--paper-hi);
+}
+
+.prose video {
+  width: 100%;
+}
+
+/* Figures with a caption underneath; media inside a figure drops its own margin. */
+.prose figure {
+  margin: 1.6em 0;
+}
+
+.prose figure img,
+.prose figure video {
+  margin: 0;
+}
+
+.prose figcaption {
+  margin-top: 6px;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.prose figcaption .fig {
+  margin-right: 4px;
+  font-style: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  color: var(--print);
+}
+
+/* Two figures side by side, e.g. a success and a failure run. */
+.prose .pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 1.6em 0;
+}
+
+.prose .pair figure {
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .prose .pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.prose code {
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  background: var(--paper-hi);
+  font: 0.86em var(--mono);
+}
+
+.prose pre {
+  overflow-x: auto;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.prose pre code {
+  padding: 0;
+  background: none;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.3em;
+}
+
+.prose li {
+  margin: 0.3em 0;
+}
+
+.prose blockquote {
+  margin: 1.2em 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--pen);
+  font-style: italic;
+}
+
+.prose hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1px dotted var(--dots);
+}
+
+@media (max-width: 760px) {
+  :root {
+    --pad: 18px;
+  }
+
+  .sheet::after {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 4px;
+  }
+
+  .page-title {
+    font-size: 30px;
+  }
+}

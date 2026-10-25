@@ -1,0 +1,61 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+import Link from "@components/Link.astro";
+import ExperienceList from "@components/ExperienceList.astro";
+import LogoChip from "@components/LogoChip.astro";
+import { withBase } from "@lib/utils";
+import { experience, education } from "@data/experience";
+import { CV } from "@consts";
+
+const cvPdf = withBase("/files/GomezAndreu_CV.pdf");
+---
+
+<PageLayout title={CV.TITLE} description={CV.DESCRIPTION}>
+  <div class="row head">
+    <h1 class="page-title">Curriculum vitae</h1>
+    <a class="pdf hand" href={cvPdf} target="_blank" rel="noopener">download the pdf →</a>
+  </div>
+  <p class="intro">The PDF is the most up-to-date version.</p>
+
+  <h2 class="section-title">education</h2>
+  {education.map((e) => (
+    <div class="row item">
+      <div class="entry">
+        <LogoChip src={e.logo} alt={e.logoAlt} />
+        <div>
+          <div class="item-title">{e.detail}</div>
+          <p class="item-desc">{e.href ? <Link href={e.href} external>{e.institution}</Link> : e.institution}</p>
+        </div>
+      </div>
+      <p class="when caps">{e.period}</p>
+    </div>
+  ))}
+
+  <h2 class="section-title">experience</h2>
+  <ExperienceList items={experience} />
+</PageLayout>
+
+<style>
+  .head {
+    align-items: baseline;
+  }
+  .pdf {
+    font-size: 22px;
+    text-decoration: none;
+  }
+  .intro {
+    margin: 0;
+    font-style: italic;
+    color: var(--body);
+  }
+  .entry {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .when {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+</style>

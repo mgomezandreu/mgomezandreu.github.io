@@ -1,0 +1,53 @@
+---
+import { SITE, WRITEUPS } from "@consts";
+import { withBase } from "@lib/utils";
+
+const path = Astro.url.pathname.replace(/\/$/, "");
+const nav = [
+  { label: "papers", href: "/#papers", current: false },
+  ...(WRITEUPS ? [{ label: "notes", href: "/notes", current: path.startsWith(withBase("/notes")) }] : []),
+  { label: "cv", href: "/cv", current: path === withBase("/cv") },
+];
+---
+
+<header class="row">
+  <a class="name caps" href={withBase("/")}>{SITE.NAME}</a>
+  <nav class="caps" aria-label="Main">
+    {nav.map((item, i) => (
+      <>
+        {i > 0 && <span aria-hidden="true"> · </span>}
+        <a href={withBase(item.href)} aria-current={item.current ? "page" : undefined}>{item.label}</a>
+      </>
+    ))}
+  </nav>
+</header>
+
+<style>
+  header {
+    align-items: baseline;
+    padding: 24px 0 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .name {
+    font-size: 16px;
+    color: var(--print);
+    text-decoration: none;
+  }
+  nav {
+    font-size: 15px;
+    color: var(--quiet);
+    text-align: right;
+  }
+  nav a {
+    text-decoration: none;
+  }
+  nav a:hover,
+  nav a[aria-current="page"] {
+    color: var(--red);
+  }
+  @media (max-width: 760px) {
+    nav {
+      text-align: left;
+    }
+  }
+</style>

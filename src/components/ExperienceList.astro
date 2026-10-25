@@ -1,0 +1,31 @@
+---
+import Link from "@components/Link.astro";
+import LogoChip from "@components/LogoChip.astro";
+import type { Experience } from "@data/experience";
+
+type Props = {
+  items: Experience[];
+};
+
+const { items } = Astro.props;
+---
+
+{items.map((x) => (
+  <div class="row item">
+    <div class="entry">
+      <LogoChip src={x.logo} alt={x.logoAlt} />
+      <div>
+        <div class="item-title">{x.href ? <Link href={x.href} external>{x.org}</Link> : x.org}</div>
+        <p class="item-desc">{x.note}</p>
+      </div>
+    </div>
+  </div>
+))}
+
+<style>
+  .entry {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+</style>

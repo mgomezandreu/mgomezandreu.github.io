@@ -1,0 +1,89 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+import Link from "@components/Link.astro";
+import PaperEntry from "@components/PaperEntry.astro";
+import { publications } from "@data/publications";
+import { SITE, HOME, SOCIALS, WRITEUPS } from "@consts";
+import { withBase } from "@lib/utils";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+
+// Notes and projects live in src/writeups, which stays local (it is not in the
+// public repo), so their home-page sections are picked up only if present.
+const WriteUps = Object.values(
+  import.meta.glob<{ default: AstroComponentFactory }>("../writeups/HomeSections.astro", { eager: true }),
+)[0]?.default;
+
+const contact = [
+  { label: "email", href: `mailto:${SITE.EMAIL}` },
+  ...SOCIALS.map(s => ({ label: s.NAME, href: s.HREF })),
+  ...(WRITEUPS ? [{ label: "rss", href: withBase("/rss.xml") }] : []),
+];
+---
+
+<PageLayout description={HOME.DESCRIPTION}>
+  <!-- The margin column of the hero is reserved for the main interactive
+       animation (to come). -->
+  <section class="hero row">
+    <div class="intro">
+      <h1>Hi, I'm Mario.</h1>
+      <p>
+        I'm a doctoral fellow at the <Link href="https://learning-systems.org/" external>Center for Learning Systems</Link>,
+        working with Marc Pollefeys in the
+        <Link href="https://cvg.ethz.ch/" external>Computer Vision and Geometry Group</Link> at ETH Zürich
+        and with Wieland Brendel's <Link href="https://brendel-group.github.io/" external>lab</Link> at the
+        ELLIS Institute in Tübingen.
+      </p>
+      <p>
+        I focus on methods that let autonomous agents learn actionable world representations, flexible
+        enough for complex, goal-oriented behaviour and for autonomously improving their capabilities. In particular, I'm
+        interested in loco-manipulation, to make robots useful both as companions in daily life and in
+        dangerous, high-stakes situations.
+      </p>
+      <p>
+        Before that I did my master's in Robotics, Systems and Control at
+        <Link href="https://ethz.ch/en.html" external>ETH</Link>, focused on planning and AI,
+        with my thesis at the <Link href="https://www.proroklab.org/" external>Prorok Lab</Link> in Cambridge.
+        Along the way I worked at the <Link href="https://rsl.ethz.ch/" external>Robotic Systems Lab</Link>
+        (trajectory optimization on Gaussian Splats for ANYmal, a rope gripper), at
+        <Link href="https://gravisrobotics.com/" external>Gravis Robotics</Link> (planning and MPC for
+        autonomous excavators), and at <Link href="https://www.ias.informatik.tu-darmstadt.de/" external>TU Darmstadt</Link>
+        during my bachelor's in computer science (robot juggling, tactile sensing).
+      </p>
+      <p class="contact">
+        {contact.map((l, i) => (
+          <>{i > 0 && <span aria-hidden="true"> · </span>}<a href={l.href}>{l.label}</a></>
+        ))}
+      </p>
+    </div>
+  </section>
+
+  <h2 class="section-title" id="papers">papers</h2>
+  {publications.map((pub, i) => <PaperEntry pub={pub} number={publications.length - i} />)}
+
+  {/* Notes and projects only show up where write-ups are on (see consts.ts). */}
+  {WRITEUPS && WriteUps && <WriteUps />}
+</PageLayout>
+
+<style>
+  .hero {
+    margin-top: 28px;
+  }
+  h1 {
+    margin: 6px 0 12px;
+    font-size: 40px;
+    letter-spacing: -0.01em;
+  }
+  .intro p {
+    margin: 0 0 10px;
+    color: var(--body);
+  }
+  .intro .contact {
+    margin-top: 16px;
+    font-size: 15.5px;
+  }
+  @media (max-width: 760px) {
+    h1 {
+      font-size: 32px;
+    }
+  }
+</style>
